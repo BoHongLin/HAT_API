@@ -45,6 +45,7 @@ namespace HAT_API_CUS
                                 {
                                     int success = 0;
                                     int fail = 0;
+                                    int incomplete = 0;
                                     while (reader.Read())
                                     {
                                         //判斷CRM是否有資料
@@ -78,6 +79,10 @@ namespace HAT_API_CUS
                                                         //新增、更新資料有錯誤 則新增一筆detail
                                                         dataSync.CreateDataSyncDetailForCRM(reader["asno"].ToString().Trim(), reader["asna"].ToString().Trim(), transactionType, transactionStatus);
                                                         fail++;
+                                                        break;
+                                                    case TransactionStatus.Incomplete:
+                                                        dataSync.CreateDataSyncDetailForCRM(reader["asno"].ToString().Trim(), reader["asna"].ToString().Trim(), transactionType, transactionStatus);
+                                                        incomplete++;
                                                         break;
                                                     default:
                                                         fail++;

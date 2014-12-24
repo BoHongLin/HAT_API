@@ -32,8 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CRM">
-      <HintPath>..\..\HAT_API\CRM\bin\Debug\CRM.dll</HintPath>
+    <Reference Include="CRM, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\HAT\data\CRM.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xrm.Client">
       <HintPath>..\..\..\..\Demo\Data\Microsoft.Xrm.Client.dll</HintPath>
