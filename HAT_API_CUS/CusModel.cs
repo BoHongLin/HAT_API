@@ -12,10 +12,8 @@ namespace HAT_API_CUS
 {
     class CusModel
     {
-        /// false no contact 
-        /// true with contact
-        Boolean isNeedContact = true;
-        TransactionStatus transactionStatus = TransactionStatus.Success;
+        public Boolean isNeedContact;
+        TransactionStatus transactionStatus;
 
         //static
         private OrganizationServiceContext xrm = EnvironmentSetting.Xrm;
@@ -63,6 +61,7 @@ namespace HAT_API_CUS
         {
             try
             {
+                transactionStatus = TransactionStatus.Success;
                 //special
                 //lookup
                 primarycontactid = reader.GetOrdinal("boss");
@@ -143,6 +142,7 @@ namespace HAT_API_CUS
         {
             try
             {
+                transactionStatus = TransactionStatus.Success;
                 Entity entity = new Entity("account");
                 //ERP撈出來寫到CRM要設定成已成交
                 entity["new_businessdevelopstatus"] = new OptionSetValue(100000001);
@@ -218,10 +218,13 @@ namespace HAT_API_CUS
                             EnvironmentSetting.ErrorMsg += "\tCRM欄位 : fullname\n";
                             EnvironmentSetting.ErrorMsg += "\tERP欄位 : boss\n";
                             //Console.WriteLine(EnvironmentSetting.ErrorMsg);
-                            transactionStatus = TransactionStatus.Incomplete;
+                            transactionStatus = TransactionStatus.Partially;
                         }
                         else
+                        {
+                            Console.WriteLine(reader.GetString(accountnumber).Trim());
                             entity["primarycontactid"] = new EntityReference("contact", recordGuid);
+                        }
                     }
 
                     /// CRM欄位名稱     帳務人員    new_arcontactor
@@ -243,9 +246,13 @@ namespace HAT_API_CUS
                             EnvironmentSetting.ErrorMsg += "\tERP欄位 : accman\n";
                             //EnvironmentSetting.ErrorMsg += "\tERP資料 : " + recordStr + "\n";
                             //Console.WriteLine(EnvironmentSetting.ErrorMsg);
-                            transactionStatus = TransactionStatus.Incomplete;
+                            transactionStatus = TransactionStatus.Partially;
                         }
-                        entity["new_arcontactor"] = new EntityReference("contact", recordGuid);
+                        else
+                        {
+                            Console.WriteLine(reader.GetString(accountnumber).Trim());
+                            entity["new_arcontactor"] = new EntityReference("contact", recordGuid);
+                        }
                     }
 
                     /// CRM欄位名稱     訂貨聯絡人       new_purcontactor
@@ -267,9 +274,13 @@ namespace HAT_API_CUS
                             EnvironmentSetting.ErrorMsg += "\tERP欄位 : cman\n";
                             //EnvironmentSetting.ErrorMsg += "\tERP資料 : " + recordStr + "\n";
                             //Console.WriteLine(EnvironmentSetting.ErrorMsg);
-                            transactionStatus = TransactionStatus.Incomplete;
+                            transactionStatus = TransactionStatus.Partially;
                         }
-                        entity["new_purcontactor"] = new EntityReference("contact", recordGuid);
+                        else
+                        {
+                            Console.WriteLine(reader.GetString(accountnumber).Trim());
+                            entity["new_purcontactor"] = new EntityReference("contact", recordGuid);
+                        }
                     }
                 }
                 /// CRM欄位名稱     外釋診所    new_relative_account
@@ -291,7 +302,7 @@ namespace HAT_API_CUS
                         EnvironmentSetting.ErrorMsg += "\tERP欄位 : gprna\n";
                         //EnvironmentSetting.ErrorMsg += "\tERP資料 : " + recordStr + "\n";
                         //Console.WriteLine(EnvironmentSetting.ErrorMsg);
-                        transactionStatus= TransactionStatus.Incomplete;
+                        return TransactionStatus.Fail;
                     }
                     entity["new_relative_account"] = new EntityReference("account", recordGuid);
                 }
@@ -315,7 +326,7 @@ namespace HAT_API_CUS
                         EnvironmentSetting.ErrorMsg += "\tERP欄位 : grpno\n";
                         //EnvironmentSetting.ErrorMsg += "\tERP資料 : " + recordStr + "\n";
                         //Console.WriteLine(EnvironmentSetting.ErrorMsg);
-                        transactionStatus =  TransactionStatus.Incomplete;
+                        return TransactionStatus.Fail;
                     }
                     entity["new_grpno"] = new EntityReference("new_grpno", recordGuid);
                 }

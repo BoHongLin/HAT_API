@@ -5,12 +5,17 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace HAT_API_CUS
 {
     class CusFlow
     {
+        /// false no contact 
+        /// true with contact
+        static Boolean isNeedContact = false;
+
         private static Logger _logger = LogManager.GetCurrentClassLogger();
         public void DoCusFlow()
         {
@@ -20,7 +25,10 @@ namespace HAT_API_CUS
             if (EnvironmentSetting.ErrorType == ErrorType.None)
             {
                 //create dataSync
-                dataSync.CreateDataSyncForCRM("客戶");
+                if (isNeedContact)
+                    dataSync.CreateDataSyncForCRM("客戶(含連絡人)");
+                else
+                    dataSync.CreateDataSyncForCRM("客戶");
                 if (EnvironmentSetting.ErrorType == ErrorType.None)
                 {
                     //connection DB
@@ -36,6 +44,7 @@ namespace HAT_API_CUS
 
                             //search field index
                             CusModel cusmodel = new CusModel(reader);
+                            cusmodel.isNeedContact = isNeedContact;
                             if (EnvironmentSetting.ErrorType == ErrorType.None)
                             {
                                 Console.WriteLine("連線成功!!");
@@ -45,7 +54,7 @@ namespace HAT_API_CUS
                                 {
                                     int success = 0;
                                     int fail = 0;
-                                    int incomplete = 0;
+                                    int partially = 0;
                                     while (reader.Read())
                                     {
                                         //判斷CRM是否有資料
@@ -80,9 +89,9 @@ namespace HAT_API_CUS
                                                         dataSync.CreateDataSyncDetailForCRM(reader["asno"].ToString().Trim(), reader["asna"].ToString().Trim(), transactionType, transactionStatus);
                                                         fail++;
                                                         break;
-                                                    case TransactionStatus.Incomplete:
+                                                    case TransactionStatus.Partially:
                                                         dataSync.CreateDataSyncDetailForCRM(reader["asno"].ToString().Trim(), reader["asna"].ToString().Trim(), transactionType, transactionStatus);
-                                                        incomplete++;
+                                                        partially++;
                                                         break;
                                                     default:
                                                         fail++;
@@ -100,7 +109,7 @@ namespace HAT_API_CUS
                                         }
                                     }
                                     //更新DataSync 成功、失敗、完成時間
-                                    dataSync.UpdateDataSyncForCRM(success, fail);
+                                    dataSync.UpdateDataSyncForCRM(success, fail, partially);
                                 }
                                 else
                                 {
