@@ -101,6 +101,8 @@ namespace HAT_API_CUS
                                                 //新增detail錯誤 則結束
                                                 if (EnvironmentSetting.ErrorType != ErrorType.None)
                                                 {
+                                                    _logger.Info("asno : " + reader["asno"].ToString().Trim());
+                                                    _logger.Info("asna : " + reader["asna"].ToString().Trim());
                                                     _logger.Info(EnvironmentSetting.ErrorMsg);
                                                     EnvironmentSetting.ErrorType = ErrorType.None;
                                                     //break;

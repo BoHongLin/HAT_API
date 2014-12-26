@@ -14,7 +14,7 @@ namespace HAT_API_CUS
     {
         public Boolean isNeedContact;
         TransactionStatus transactionStatus;
-
+        #region
         //static
         private OrganizationServiceContext xrm = EnvironmentSetting.Xrm;
         private IOrganizationService service = EnvironmentSetting.Service;
@@ -56,6 +56,8 @@ namespace HAT_API_CUS
         //string
         private static String[] stringNameArray = { "acfaxno", "acmtelno", "inusno", "invrmk", "misno", "saleno" };
         private int[] stringIntArray = new int[stringNameArray.Length];
+
+        #endregion
 
         public CusModel(SqlDataReader reader)
         {
@@ -179,17 +181,17 @@ namespace HAT_API_CUS
                 else
                     entity["new_collection_method"] = new OptionSetValue(Convert.ToInt32(recordStr));
 
-                //recordStr = reader.GetString(new_discount_method).Trim();
-                //if (recordStr == "" || recordStr == null)
-                //    account["new_discount_method"] = new OptionSetValue(100000001);
-                //else
-                //    account["new_discount_method"] = new OptionSetValue(Convert.ToInt32(recordStr));
+                recordStr = reader.GetString(new_discount_method).Trim();
+                if (recordStr == "" || recordStr == null)
+                    entity["new_discount_method"] = new OptionSetValue(100000001);
+                else
+                    entity["new_discount_method"] = new OptionSetValue(Convert.ToInt32(recordStr));
 
-                //recordStr = reader.GetString(new_guitype).Trim();
-                //if (recordStr == "" || recordStr == null)
-                //    account["new_guitype"] = null;
-                //else
-                //    account["new_guitype"] = new OptionSetValue(Convert.ToInt32(recordStr) * 10);
+                recordStr = reader.GetString(new_guitype).Trim();
+                if (recordStr == "" || recordStr == null)
+                    entity["new_guitype"] = null;
+                else
+                    entity["new_guitype"] = new OptionSetValue(Convert.ToInt32(recordStr));
 
                 //string
                 for (int i = 0, size = stringNameArray.Length; i < size; i++)
@@ -217,12 +219,10 @@ namespace HAT_API_CUS
                             EnvironmentSetting.ErrorMsg += "\tCRM實體 : contact\n";
                             EnvironmentSetting.ErrorMsg += "\tCRM欄位 : fullname\n";
                             EnvironmentSetting.ErrorMsg += "\tERP欄位 : boss\n";
-                            //Console.WriteLine(EnvironmentSetting.ErrorMsg);
                             transactionStatus = TransactionStatus.Partially;
                         }
                         else
                         {
-                            Console.WriteLine(reader.GetString(accountnumber).Trim());
                             entity["primarycontactid"] = new EntityReference("contact", recordGuid);
                         }
                     }
@@ -244,13 +244,10 @@ namespace HAT_API_CUS
                             EnvironmentSetting.ErrorMsg += "\tCRM實體 : contact\n";
                             EnvironmentSetting.ErrorMsg += "\tCRM欄位 : fullname\n";
                             EnvironmentSetting.ErrorMsg += "\tERP欄位 : accman\n";
-                            //EnvironmentSetting.ErrorMsg += "\tERP資料 : " + recordStr + "\n";
-                            //Console.WriteLine(EnvironmentSetting.ErrorMsg);
                             transactionStatus = TransactionStatus.Partially;
                         }
                         else
                         {
-                            Console.WriteLine(reader.GetString(accountnumber).Trim());
                             entity["new_arcontactor"] = new EntityReference("contact", recordGuid);
                         }
                     }
@@ -272,13 +269,10 @@ namespace HAT_API_CUS
                             EnvironmentSetting.ErrorMsg += "\tCRM實體 : contact\n";
                             EnvironmentSetting.ErrorMsg += "\tCRM欄位 : fullname\n";
                             EnvironmentSetting.ErrorMsg += "\tERP欄位 : cman\n";
-                            //EnvironmentSetting.ErrorMsg += "\tERP資料 : " + recordStr + "\n";
-                            //Console.WriteLine(EnvironmentSetting.ErrorMsg);
                             transactionStatus = TransactionStatus.Partially;
                         }
                         else
                         {
-                            Console.WriteLine(reader.GetString(accountnumber).Trim());
                             entity["new_purcontactor"] = new EntityReference("contact", recordGuid);
                         }
                     }
@@ -300,11 +294,12 @@ namespace HAT_API_CUS
                         EnvironmentSetting.ErrorMsg += "\tCRM實體 : account\n";
                         EnvironmentSetting.ErrorMsg += "\tCRM欄位 : name\n";
                         EnvironmentSetting.ErrorMsg += "\tERP欄位 : gprna\n";
-                        //EnvironmentSetting.ErrorMsg += "\tERP資料 : " + recordStr + "\n";
-                        //Console.WriteLine(EnvironmentSetting.ErrorMsg);
-                        return TransactionStatus.Fail;
+                        transactionStatus = TransactionStatus.Partially;
                     }
-                    entity["new_relative_account"] = new EntityReference("account", recordGuid);
+                    else
+                    {
+                        entity["new_relative_account"] = new EntityReference("account", recordGuid);
+                    }
                 }
 
                 /// CRM欄位名稱     醫院群組        new_grpno
@@ -324,8 +319,6 @@ namespace HAT_API_CUS
                         EnvironmentSetting.ErrorMsg += "\tCRM實體 : new_grpno\n";
                         EnvironmentSetting.ErrorMsg += "\tCRM欄位 : new_grpno\n";
                         EnvironmentSetting.ErrorMsg += "\tERP欄位 : grpno\n";
-                        //EnvironmentSetting.ErrorMsg += "\tERP資料 : " + recordStr + "\n";
-                        //Console.WriteLine(EnvironmentSetting.ErrorMsg);
                         return TransactionStatus.Fail;
                     }
                     entity["new_grpno"] = new EntityReference("new_grpno", recordGuid);
