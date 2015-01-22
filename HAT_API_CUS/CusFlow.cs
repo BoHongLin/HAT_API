@@ -144,7 +144,7 @@ namespace HAT_API_CUS
                     break;
             }
             Console.WriteLine("執行完畢...");
-            Console.ReadLine();
+            //Console.ReadLine();
         }
     }
 }
